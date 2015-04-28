@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="drill">
+
+  <!--<link name="world"/>-->
+
+  <!--<joint name="gbeam_link_joint" type="fixed">-->
+    <!--<parent link="world"/>-->
+    <!--<child link="gbeam_link"/>-->
+  <!--</joint>-->
+
+  <!--<xacro:property name="xyz" value="0.6485 -0.0755 0.1240"/>-->
+  <xacro:property name="xyz" value="0 0 0"/>
+
+  <xacro:if value="$(arg static)">
+    <gazebo>
+      <static>true</static>
+    </gazebo>
+
+    <link name="world"/>
+    <joint name="world_joint" type="fixed">
+      <parent link="world"/>
+      <child link="gbeam_link"/>
+    </joint>
+  </xacro:if>
+
+  <xacro:macro name="inertia_cuboid" params="m lx ly lz">
+    <mass value="${m}" />
+    <inertia
+      ixx="${1.0 / 12.0 * m * (ly*ly + lz*lz)}" ixy="0"  ixz="0"
+      iyy="${1.0 / 12.0 * m * (lx*lx + lz*lz)}" iyz="0"
+      izz="${1.0 / 12.0 * m * (ly*ly + lx*lx)}" />
+  </xacro:macro>
+
+  <link name="gbeam_link">
+    <inertial>
+      <origin xyz="0 0 0.15"/>
+      <xacro:inertia_cuboid m="0.100" lx="0.03" ly="0.240" lz="0.03"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="DarkGrey">
+        <color rgba="0.2 0.2 0.2 0.0"/>
+      </material>
+      <geometry>
+        <mesh filename="package://lcsr_objects/meshes/bosch_hand_drill_collar_model_uniform.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://lcsr_objects/meshes/bosch_hand_drill_collar_model_uniform.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="gbeam_link">
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <kp>10.0</kp>
+    <kd>0.2</kd>
+  </gazebo>
+
+</robot>
